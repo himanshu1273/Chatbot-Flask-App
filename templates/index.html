@@ -1,0 +1,83 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <style type="text/css">
+      .body{
+      margin: 0;
+      overflow: scroll;
+      height:100%;
+    }
+    </style>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Chat Room</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" 
+    integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+
+    <script type="text/javascript" src="//code.jquery.com/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script>
+    <script type="text/javascript" charset="utf-8">
+        $(document).ready(function(){
+            namespace = '/machinelearning';
+            var msgCount = 1;
+
+            var socket = io.connect('http://' + document.domain + ':' + location.port + namespace);
+
+            socket.on('response', function(msg) {
+                $('div.message_holder').append('<br>' + $('<div/>').text('Bot #' + msgCount + ': ' + msg.data).html());
+                msgCount += 1;
+            });
+            $('form#emit').submit(function(event) {
+                socket.emit('message', {data: $('#emit_data').val()});
+                $('div.message_holder').append('<br>' + $('<div/>').text('You #' + msgCount + ': ' + $('#emit_data').val()).html());
+                msgCount += 1;
+                $( 'input.message' ).val( '' ).focus();
+                return false;
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="text-center well"><b>Machine Learning based ChatBot</b></div>
+
+    <div class="container">
+      <div class="col-sm-8">
+        <div class="no_message">
+          <h1 style='color: #ccc'>About ChatBot</h1>
+          <ul>
+            <li>Trained for greetings and basic conversation in English</li>
+            <li>Based on: <a href="https://github.com/gunthercox/ChatterBot">https://github.com/gunthercox/ChatterBot/tree/master/chatterbot</a>
+            </li>
+            <li>Self Learning and Manual Batch Learning is possible</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="col-sm-4">
+        <div class="panel panel-info">
+          <div class="panel-heading">
+              <strong><span class="glyphicon glyphicon-list"></span> Chat History</strong>
+          </div>
+          <div class="panel-body fixed-panel body">
+          <div style="height:350px;width:100%;">
+              <ul class="media-list">
+              </ul>
+              <div class="message_holder"></div>
+          </div>
+          </div>
+        </div>
+        <form id="emit" method="POST" action='#'>
+          <b>Type your message below <span class="glyphicon glyphicon-arrow-down"></span></b>
+          <div style="padding-top: 5px;"></div>
+          <input type="text" name="emit_data" id="emit_data" class="message form-control" placeholder="Messages">
+          <div style="padding-top: 5px;"></div>
+          <button type="submit" value="Echo" class="btn btn-success btn-block"><span class="glyphicon glyphicon-send"></span> Send</button>
+        </form>
+        <div style="padding-top: 350px;"></div>
+      </div>
+    </div>
+</body>
+</html>
